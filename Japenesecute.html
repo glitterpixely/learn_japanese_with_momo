@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Momo - Learn Japanese</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Quicksand', 'sans-serif'],
+                        display: ['Fredoka', 'sans-serif'] // New extra-rounded font for headers
+                    },
+                    colors: {
+                        'peach': '#ff9a9e',
+                        'peach-light': '#fecfef',
+                        'peach-bg': '#fff0f5',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #fdf2f8; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* 3D Animation Utilities */
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        
+        /* Bouncy Button Animation */
+        .btn-bounce:active { transform: scale(0.95); }
+    </style>
+</head>
+<body class="flex justify-center items-start md:pt-10 min-h-screen font-sans">
+
+    <div class="w-full max-w-md bg-white h-screen md:h-[850px] md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col relative border-8 border-white">
+
+        <div class="px-6 pt-8 pb-4 bg-white flex justify-between items-center z-10">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-xl animate-bounce">🍑</div>
+                <span class="font-display font-semibold text-2xl text-gray-700 tracking-tight">Momo</span>
+            </div>
+            <div class="flex items-center space-x-1 bg-orange-50 border border-orange-100 px-3 py-1 rounded-full">
+                <span class="text-orange-400 font-bold text-sm">🔥 <span id="streak-count">5</span></span>
+            </div>
+        </div>
+
+        <div id="app-content" class="flex-1 overflow-y-auto px-6 pb-24 scrollbar-hide bg-gray-50 pt-6">
+            
+            <div id="view-home" class="view-section space-y-6">
+                <div class="bg-gradient-to-br from-peach to-pink-400 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h2 class="font-display text-2xl mb-1">Ohayou! ☀️</h2>
+                        <p class="opacity-90 mb-4 text-sm font-medium">Let's practice your Japanese!</p>
+                        <div class="flex items-center space-x-2 bg-white/25 backdrop-blur-md px-3 py-2 rounded-xl inline-flex">
+                            <i data-lucide="heart" class="text-white fill-current w-4 h-4"></i>
+                            <span class="font-bold text-sm">5 Day Streak</span>
+                        </div>
+                    </div>
+                    <div class="absolute -right-4 -bottom-8 w-32 h-32 bg-white opacity-10 rounded-full"></div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 shadow-sm border-2 border-pink-50 hover:border-pink-200 transition-colors">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="bg-pink-100 text-pink-500 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Word of the Day</span>
+                    </div>
+                    <h3 class="font-display text-4xl text-gray-800 mt-2">桜 <span class="text-lg font-sans font-normal text-gray-400 ml-2">(Sakura)</span></h3>
+                    <p class="text-gray-500 mt-1">Cherry Blossom</p>
+                    <div class="mt-4 flex items-center space-x-2">
+                        <button class="p-2 bg-gray-100 rounded-full text-gray-500 hover:bg-pink-100 hover:text-pink-500 transition btn-bounce" onclick="alert('Audio: Sakura')">
+                           <i data-lucide="volume-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="switchTab('learn')" class="p-4 bg-yellow-50 rounded-2xl border-2 border-yellow-100 hover:bg-yellow-100 transition text-left group btn-bounce">
+                        <div class="bg-yellow-200 w-10 h-10 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                            <i data-lucide="book-open" class="text-yellow-600 w-5 h-5"></i>
+                        </div>
+                        <span class="font-bold text-gray-700 block">Flashcards</span>
+                    </button>
+                    <button onclick="switchTab('games')" class="p-4 bg-green-50 rounded-2xl border-2 border-green-100 hover:bg-green-100 transition text-left group btn-bounce">
+                        <div class="bg-green-200 w-10 h-10 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                             <i data-lucide="gamepad-2" class="text-green-600 w-5 h-5"></i>
+                        </div>
+                        <span class="font-bold text-gray-700 block">Mini Games</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="view-learn" class="view-section hidden space-y-8">
+                <div class="flex items-center justify-center space-x-2 mb-4">
+                    <span class="text-4xl">😺</span>
+                    <div class="bg-white px-4 py-2 rounded-xl shadow-sm border border-pink-100 text-sm text-gray-600">
+                        "Tap the card to flip it!"
+                    </div>
+                </div>
+
+                <div class="w-full h-80 perspective-1000 cursor-pointer group" onclick="flipCard()">
+                    <div id="flashcard-inner" class="card-inner">
+                        <div class="absolute w-full h-full bg-white rounded-[30px] shadow-xl border-b-8 border-r-4 border-pink-200 flex flex-col items-center justify-center backface-hidden">
+                            <span class="text-xs text-pink-400 font-bold tracking-widest mb-4 uppercase">Japanese</span>
+                            <h2 id="fc-kanji" class="text-7xl font-display text-gray-800 mb-2">猫</h2>
+                            <p id="fc-kana" class="text-2xl text-gray-400 font-medium">ねこ</p>
+                        </div>
+                        <div class="absolute w-full h-full bg-indigo-50 rounded-[30px] shadow-xl border-b-8 border-r-4 border-indigo-200 flex flex-col items-center justify-center backface-hidden rotate-y-180">
+                            <span class="text-xs text-indigo-400 font-bold tracking-widest mb-4 uppercase">English</span>
+                            <h3 id="fc-eng" class="text-4xl font-display text-indigo-600 mb-2">Cat</h3>
+                            <p id="fc-romaji" class="text-xl text-gray-500 italic mb-6">neko</p>
+                            <button class="p-4 bg-white rounded-full shadow-md text-indigo-500 hover:scale-110 transition" onclick="event.stopPropagation(); alert('Playing Audio!')">
+                                <i data-lucide="volume-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-center space-x-6 mt-4">
+                    <button onclick="prevCard()" class="w-14 h-14 flex items-center justify-center bg-gray-200 rounded-full text-gray-500 hover:bg-gray-300 transition btn-bounce">
+                        <i data-lucide="arrow-left"></i>
+                    </button>
+                    <button onclick="nextCard()" class="h-14 px-8 bg-peach text-white font-bold rounded-full shadow-lg shadow-pink-200 hover:bg-pink-400 transition btn-bounce flex items-center space-x-2">
+                        <span>Next</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="view-games" class="view-section hidden space-y-6">
+                 <div class="text-center mb-6">
+                     <h2 class="font-display text-2xl text-gray-700">Kana Match</h2>
+                     <p class="text-gray-400 text-sm">Find the matching pairs!</p>
+                 </div>
+                <div id="game-grid" class="grid grid-cols-4 gap-3">
+                    </div>
+                <button onclick="initGame()" class="w-full py-4 bg-white border-2 border-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 hover:text-pink-500 transition">Restart Game</button>
+            </div>
+
+            <div id="view-chat" class="view-section hidden h-full flex flex-col pb-4">
+                <div class="bg-gradient-to-r from-pink-100 to-purple-100 p-4 flex items-center rounded-t-3xl">
+                    <div class="bg-white p-1.5 rounded-full mr-3 text-2xl shadow-sm">😺</div>
+                    <div>
+                        <div class="font-bold text-gray-700 text-sm">Neko Sensei</div>
+                        <div class="text-xs text-pink-500 flex items-center"><div class="w-2 h-2 bg-green-400 rounded-full mr-1"></div> Online</div>
+                    </div>
+                </div>
+                
+                <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 p-4 bg-white min-h-[300px]">
+                    <div class="flex justify-start">
+                        <div class="max-w-[85%] p-4 bg-gray-100 text-gray-700 rounded-2xl rounded-tl-none text-sm">
+                            Konnichiwa! Ask me anything about Japanese grammar! 🍑
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex items-center bg-white p-2 rounded-full border-2 border-gray-100 focus-within:border-pink-300 transition">
+                    <input type="text" id="chat-input" placeholder="Type a message..." class="flex-1 bg-transparent border-none px-4 focus:outline-none text-sm text-gray-700">
+                    <button onclick="sendMessage()" class="bg-peach text-white p-2.5 rounded-full hover:bg-pink-400 transition btn-bounce shadow-md">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="absolute bottom-0 w-full bg-white border-t border-gray-100 px-8 py-4 flex justify-between items-end z-20 pb-6">
+            <button onclick="switchTab('home')" class="nav-btn text-peach flex flex-col items-center gap-1" data-target="home">
+                <i data-lucide="home" class="w-6 h-6 transition-transform active:scale-90"></i>
+            </button>
+            <button onclick="switchTab('learn')" class="nav-btn text-gray-300 flex flex-col items-center gap-1" data-target="learn">
+                <i data-lucide="layers" class="w-6 h-6 transition-transform active:scale-90"></i>
+            </button>
+            <div class="relative -top-8">
+                <button onclick="switchTab('chat')" class="bg-gray-800 w-14 h-14 rounded-full shadow-xl shadow-gray-300 flex items-center justify-center text-white hover:scale-105 transition btn-bounce border-4 border-white">
+                    <i data-lucide="sparkles" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <button onclick="switchTab('games')" class="nav-btn text-gray-300 flex flex-col items-center gap-1" data-target="games">
+                <i data-lucide="gamepad-2" class="w-6 h-6 transition-transform active:scale-90"></i>
+            </button>
+            <button class="nav-btn text-gray-300 flex flex-col items-center gap-1">
+                <div class="w-6 h-6 rounded-full bg-gray-100 overflow-hidden border border-gray-200">
+                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Momo" alt="User">
+                </div>
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const vocabData = [
+            { kanji: '猫', kana: 'ねこ', romaji: 'neko', english: 'Cat' },
+            { kanji: '桃', kana: 'もも', romaji: 'momo', english: 'Peach' },
+            { kanji: '愛', kana: 'あい', romaji: 'ai', english: 'Love' },
+            { kanji: '水', kana: 'みず', romaji: 'mizu', english: 'Water' }
+        ];
+
+        const gamePairs = [
+            { id: 'a1', val: 'あ', match: 'a' }, { id: 'a2', val: 'a', match: 'a' },
+            { id: 'b1', val: 'い', match: 'i' }, { id: 'b2', val: 'i', match: 'i' },
+            { id: 'c1', val: 'う', match: 'u' }, { id: 'c2', val: 'u', match: 'u' },
+            { id: 'd1', val: 'え', match: 'e' }, { id: 'd2', val: 'e', match: 'e' }
+        ];
+
+        let currentCardIndex = 0;
+        let gameSelected = [];
+        let gameMatched = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            updateFlashcard();
+            initGame();
+        });
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                const icon = btn.querySelector('svg');
+                if(btn.dataset.target === tabName) {
+                    btn.classList.remove('text-gray-300');
+                    btn.classList.add('text-peach');
+                } else {
+                    btn.classList.add('text-gray-300');
+                    btn.classList.remove('text-peach');
+                }
+            });
+        }
+
+        function updateFlashcard() {
+            const card = vocabData[currentCardIndex];
+            document.getElementById('fc-kanji').innerText = card.kanji;
+            document.getElementById('fc-kana').innerText = card.kana;
+            document.getElementById('fc-eng').innerText = card.english;
+            document.getElementById('fc-romaji').innerText = card.romaji;
+            document.getElementById('flashcard-inner').classList.remove('rotate-y-180');
+        }
+
+        function flipCard() {
+            document.getElementById('flashcard-inner').classList.toggle('rotate-y-180');
+        }
+
+        function nextCard() {
+            currentCardIndex = (currentCardIndex + 1) % vocabData.length;
+            updateFlashcard();
+        }
+
+        function prevCard() {
+            currentCardIndex = (currentCardIndex - 1 + vocabData.length) % vocabData.length;
+            updateFlashcard();
+        }
+
+        function initGame() {
+            const grid = document.getElementById('game-grid');
+            grid.innerHTML = '';
+            gameSelected = [];
+            gameMatched = [];
+            
+            const cards = [...gamePairs].sort(() => Math.random() - 0.5);
+
+            cards.forEach(card => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'aspect-square bg-white border-b-4 border-gray-200 rounded-xl flex items-center justify-center text-xl font-bold text-gray-600 cursor-pointer hover:bg-pink-50 transition active:border-b-0 active:translate-y-1';
+                cardEl.innerText = card.val;
+                cardEl.dataset.id = card.id;
+                cardEl.dataset.match = card.match;
+                cardEl.onclick = () => handleGameClick(cardEl, card);
+                grid.appendChild(cardEl);
+            });
+        }
+
+        function handleGameClick(el, cardData) {
+            if (gameMatched.includes(cardData.id) || gameSelected.length >= 2 || gameSelected.includes(el)) return;
+
+            el.classList.add('bg-peach', 'text-white', 'border-peach');
+            el.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
+            gameSelected.push(el);
+
+            if (gameSelected.length === 2) {
+                const [el1, el2] = gameSelected;
+                if (el1.dataset.match === el2.dataset.match) {
+                    setTimeout(() => {
+                        [el1, el2].forEach(e => {
+                            e.classList.remove('bg-peach', 'border-peach');
+                            e.classList.add('bg-green-400', 'text-white', 'border-green-500', 'opacity-50');
+                            gameMatched.push(e.dataset.id);
+                        });
+                        gameSelected = [];
+                    }, 300);
+                } else {
+                    setTimeout(() => {
+                        [el1, el2].forEach(e => {
+                            e.classList.remove('bg-peach', 'text-white', 'border-peach');
+                            e.classList.add('bg-white', 'text-gray-600', 'border-gray-200');
+                        });
+                        gameSelected = [];
+                    }, 800);
+                }
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const container = document.getElementById('chat-messages');
+            
+            // User
+            const userDiv = document.createElement('div');
+            userDiv.className = 'flex justify-end';
+            userDiv.innerHTML = `<div class="max-w-[85%] p-4 bg-gray-800 text-white rounded-2xl rounded-tr-none text-sm shadow-md">${text}</div>`;
+            container.appendChild(userDiv);
+
+            input.value = '';
+            container.scrollTop = container.scrollHeight;
+
+            // Bot
+            setTimeout(() => {
+                const botDiv = document.createElement('div');
+                botDiv.className = 'flex justify-start';
+                botDiv.innerHTML = `<div class="max-w-[85%] p-4 bg-gray-100 text-gray-700 rounded-2xl rounded-tl-none text-sm shadow-sm">Meow! "${text}" sounds interesting! Keep studying! 🍑</div>`;
+                container.appendChild(botDiv);
+                container.scrollTop = container.scrollHeight;
+            }, 1000);
+        }
+
+        document.getElementById('chat-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>
